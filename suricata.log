@@ -1,0 +1,37 @@
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Notice: suricata: This is Suricata version 7.0.2 RELEASE running in USER mode
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Info: cpu: CPUs/cores online: 4
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Info: suricata: Setting engine mode to IDS mode by default
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Info: exception-policy: master exception-policy set to: auto
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Info: logopenfile: fast output device (regular) initialized: fast.log
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Info: logopenfile: eve-log output device (regular) initialized: eve.json
+[32988 - Suricata-Main] 2023-11-24 18:12:48 Info: logopenfile: stats output device (regular) initialized: stats.log
+[32988 - Suricata-Main] 2023-11-24 18:12:50 Info: detect: 1 rule files processed. 34027 rules successfully loaded, 0 rules failed
+[32988 - Suricata-Main] 2023-11-24 18:12:50 Info: threshold-config: Threshold config parsed: 0 rule(s) found
+[32988 - Suricata-Main] 2023-11-24 18:12:50 Info: detect: 34030 signatures processed. 0 are IP-only rules, 5323 are inspecting packet payload, 28676 inspect application layer, 0 are decoder event only
+[32999 - RX#01] 2023-11-24 18:12:55 Info: pcap: Starting file run for 2023-10-31-IcedID-infection-traffic.pcap
+[32988 - Suricata-Main] 2023-11-24 18:12:55 Notice: threads: Threads created -> RX: 1 W: 4 FM: 1 FR: 1   Engine started.
+[32999 - RX#01] 2023-11-24 18:12:55 Info: checksum: No packets with invalid checksum, assuming checksum offloading is NOT used
+[32999 - RX#01] 2023-11-24 18:12:55 Info: pcap: pcap file 2023-10-31-IcedID-infection-traffic.pcap end of file reached (pcap err code 0)
+[32988 - Suricata-Main] 2023-11-24 18:12:55 Notice: suricata: Signal Received.  Stopping engine.
+[32988 - Suricata-Main] 2023-11-24 18:12:55 Info: suricata: time elapsed 0.114s
+[32999 - RX#01] 2023-11-24 18:12:55 Notice: pcap: read 1 file, 6518 packets, 5127703 bytes
+[32988 - Suricata-Main] 2023-11-24 18:12:55 Info: counters: Alerts: 35
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Notice: suricata: This is Suricata version 7.0.2 RELEASE running in USER mode
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: cpu: CPUs/cores online: 4
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: suricata: Setting engine mode to IDS mode by default
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: exception-policy: master exception-policy set to: auto
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: logopenfile: fast output device (regular) initialized: fast.log
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: logopenfile: eve-log output device (regular) initialized: eve.json
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: logopenfile: stats output device (regular) initialized: stats.log
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Warning: detect: No rule files match the pattern emerging-all.rules-l
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Warning: detect: 1 rule files specified, but no rules were loaded!
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: threshold-config: Threshold config parsed: 0 rule(s) found
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: detect: 0 signatures processed. 0 are IP-only rules, 0 are inspecting packet payload, 0 inspect application layer, 0 are decoder event only
+[2488 - RX#01] 2023-11-25 12:49:39 Info: pcap: using bpf-filter "data/"
+[2488 - RX#01] 2023-11-25 12:49:39 Error: pcap: bpf compilation error can't parse filter expression: syntax error for 2023-10-31-IcedID-infection-traffic.pcap
+[2488 - RX#01] 2023-11-25 12:49:39 Warning: pcap: Failed to init pcap file 2023-10-31-IcedID-infection-traffic.pcap, skipping
+[2488 - RX#01] 2023-11-25 12:49:39 Error: pcap: pcap file reader thread failed to initialize
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Notice: threads: Threads created -> RX: 1 W: 4 FM: 1 FR: 1   Engine started.
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Notice: suricata: Signal Received.  Stopping engine.
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: suricata: time elapsed 0.046s
+[2487 - Suricata-Main] 2023-11-25 12:49:39 Info: counters: Alerts: 0
