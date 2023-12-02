@@ -18,7 +18,7 @@ def is_private_ip(ip):
         return False
 
 data=[]
-with open("eve.json","r") as f:
+with open("1.json","r") as f:
 	for line in f:
 		
 		data.append(json.loads(line))
@@ -32,6 +32,8 @@ signatures=[]
 iocs=[]
 services=[]
 impacted=[]
+users=[]
+os=[]
 for line in data:
 	timestamps.append(line["timestamp"])
 	try:
@@ -41,17 +43,31 @@ for line in data:
 			private_ips.append(line["dest_ip"])
 	except:
 		continue
-	if line["event_type"]=="dns":
-		if "windows" in line["dns"]["rrname"]:
-			windows_domains.append(line["dns"]["rrname"])
-	if line["event_type"]=="flow":
-		if is_private_ip(line["src_ip"]):
-			services.append((line["app_proto"],"port : " + str(line["dest_port"])))
+	try:
+		if line["event_type"]=="dns":
+			if "windows" in line["dns"]["rrname"]:
+				windows_domains.append(line["dns"]["rrname"])
+		if line["event_type"]=="flow":
+			if is_private_ip(line["src_ip"]) and line["app_proto"]!="failed":
 
+				services.append((line["app_proto"],"port : " + str(line["dest_port"])))
+	except:
+		continue
+	try:
+		if line["event_type"]=="smb":
+			if "ntlmssp" in line["smb"]:
+				if line["smb"]["ntlmssp"]["user"]!="":
+					users.append(line["smb"]["ntlmssp"]["user"])
+				if "response" in line["smb"]:
+					
+					if line["smb"]["response"]["native_os"]!="":
+						os.append(line["smb"]["response"]["native_os"])
+	except:
+		continue
 	try:
 		if line["event_type"]=="alert":
 			signatures.append(line["alert"]["signature"])
-			malwares.append(line["alert"]["metadata"]["malware_family"])
+			malwares.append(line["alert"]["metadata"]["malware_family"][0])
 			if "tls" in line:
 				iocs.append((line["dest_ip"],line["tls"]["sni"]))
 			if "dns" in line:
@@ -84,8 +100,24 @@ file.write("Windows domains :  \n")
 for domain in set(windows_domains):
 	file.write(domain + "\n")
 
+#q4
+print(set(users))
+file.write("Users : \n")
+for user in set(users):
+	file.write(user + "\n")
+file.write("\n")
+#q5
+print(set(os))
+file.write("OS : \n")
+for op in set(os):
+	file.write(op + "\n")
+file.write("\n")
 #q6
 print(set(services))
+file.write("Services : \n")
+for service in set(services):
+	file.write(service[0] + " " + service[1] + "\n")
+
 
 file.write("THREAT DETECTION \n\n")
 #q0
@@ -95,7 +127,16 @@ for sign in set(signatures):
 	file.write(sign + "\n")
 #q1
 print((malwares))
+file.write("\n")
+file.write("Malwares detected : \n")
+for malware in set(malwares):
+	file.write(malware + "\n")
 
-#q2
+#q3
 print(set(iocs))
+file.write("IOCS impacted (hostname,ip) : \n")
+for ioc in set(iocs):
+	file.write(ioc[0] + " " + ioc[1] + "\n")
+
+
 
