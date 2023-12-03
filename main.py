@@ -1,6 +1,13 @@
 import json
 from datetime import datetime
 import ipaddress
+from fpdf import FPDF
+import sys
+
+if len(sys.argv)<2:
+	print("Usage python3 main.py <json_file>")
+	sys.exit(1)
+
 
 def format_date(date):
 	date_object = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f%z")	
@@ -18,7 +25,7 @@ def is_private_ip(ip):
         return False
 
 data=[]
-with open("1.json","r") as f:
+with open(sys.argv[1],"r") as f:
 	for line in f:
 		
 		data.append(json.loads(line))
@@ -65,6 +72,13 @@ for line in data:
 	except:
 		continue
 	try:
+		if line["event_type"]=="krb5":
+			if "cname" in line["krb5"] and line["krb5"]["cname"]!="<empty>":
+				users.append(line["krb5"]["cname"])
+				
+	except:
+		continue
+	try:
 		if line["event_type"]=="alert":
 			signatures.append(line["alert"]["signature"])
 			malwares.append(line["alert"]["metadata"]["malware_family"][0])
@@ -74,6 +88,12 @@ for line in data:
 				iocs.append((line["dest_ip"],line["dns"]["query"][0]["rrname"]))
 	except:
 		continue
+	try:
+		if line["event_type"]=="alert":
+			pass
+	except:
+		continue
+
 sorted_timestamps=sorted(timestamps, key=extract_timestamp_key)
 
 file=open("report.txt","w")
@@ -131,12 +151,24 @@ file.write("\n")
 file.write("Malwares detected : \n")
 for malware in set(malwares):
 	file.write(malware + "\n")
-
+print("\n")
 #q3
 print(set(iocs))
 file.write("IOCS impacted (hostname,ip) : \n")
 for ioc in set(iocs):
 	file.write(ioc[0] + " " + ioc[1] + "\n")
 
+#q4
 
+
+file.close()
+
+pdf = FPDF()   
+
+pdf.add_page()
+pdf.set_font("Arial", size = 15)
+file=open("report.txt","r")
+for x in file:
+    pdf.cell(200, 10, txt = x, ln = 1, align = 'C')
+pdf.output("report.pdf")  
 
