@@ -41,6 +41,7 @@ services=[]
 impacted=[]
 users=[]
 os=[]
+impacted_adresses=[]
 for line in data:
 	timestamps.append(line["timestamp"])
 	try:
@@ -52,7 +53,7 @@ for line in data:
 		continue
 	try:
 		if line["event_type"]=="dns":
-			if "windows" in line["dns"]["rrname"]:
+			if "windows" in line["dns"]["rrname"] or "microsoft" in line["dns"]["rrname"]:
 				windows_domains.append(line["dns"]["rrname"])
 		if line["event_type"]=="flow":
 			if is_private_ip(line["src_ip"]) and line["app_proto"]!="failed":
@@ -82,15 +83,18 @@ for line in data:
 		if line["event_type"]=="alert":
 			signatures.append(line["alert"]["signature"])
 			malwares.append(line["alert"]["metadata"]["malware_family"][0])
-			if "tls" in line:
+			if "tls" in line and line["dest_ip"] not in set(private_ips):
 				iocs.append((line["dest_ip"],line["tls"]["sni"]))
-			if "dns" in line:
+			if "dns" in line and line["dest_ip"] not in set(private_ips):
 				iocs.append((line["dest_ip"],line["dns"]["query"][0]["rrname"]))
 	except:
 		continue
 	try:
 		if line["event_type"]=="alert":
-			pass
+			if line["src_ip"] in private_ips: 
+				impacted_adresses.append(line["src_ip"])
+			if line["dest_ip"] in private_ips:
+				impacted_adresses.append(line["dest_ip"])
 	except:
 		continue
 
@@ -151,6 +155,14 @@ file.write("\n")
 file.write("Malwares detected : \n")
 for malware in set(malwares):
 	file.write(malware + "\n")
+print("\n")
+
+#q2
+file.write("\n")
+file.write("Private adresses impacted : \n")
+print(impacted_adresses)
+for adresses in set(impacted_adresses):
+	file.write(adresses + "\n")
 print("\n")
 #q3
 print(set(iocs))
