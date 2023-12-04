@@ -117,6 +117,8 @@ for p_ip in set(private_ips):
 
 #q2
 file.write("\n")
+ips=[]
+print(trouver_reseau_commun(set(private_ips)))
 #q3
 print(set(windows_domains))
 
