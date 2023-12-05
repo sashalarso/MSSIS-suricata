@@ -42,6 +42,8 @@ impacted=[]
 users=[]
 os=[]
 impacted_adresses=[]
+domain_ctl=[]
+hashes=[]
 for line in data:
 	timestamps.append(line["timestamp"])
 	try:
@@ -55,6 +57,9 @@ for line in data:
 		if line["event_type"]=="dns":
 			if "windows" in line["dns"]["rrname"] or "microsoft" in line["dns"]["rrname"]:
 				windows_domains.append(line["dns"]["rrname"])
+			if "rrname" in line["dns"]:
+				if line["dns"]["rrtype"]=="SRV":
+					domain_ctl.append(line["dns"]["rrname"])
 		if line["event_type"]=="flow":
 			if is_private_ip(line["src_ip"]) and line["app_proto"]!="failed":
 
@@ -97,6 +102,17 @@ for line in data:
 				impacted_adresses.append(line["dest_ip"])
 	except:
 		continue
+	try:
+		if line["event_type"]=="alert":
+			flow_id=line["flow_id"]
+			
+			for sub in data:
+				if sub["flow_id"]==flow_id and sub["event_type"]=="fileinfo":
+					
+					if "fileinfo" in sub:
+						hashes.append(sub["fileinfo"]["sha256"])
+	except:
+		continue
 
 sorted_timestamps=sorted(timestamps, key=extract_timestamp_key)
 
@@ -125,7 +141,9 @@ print(set(windows_domains))
 file.write("Windows domains :  \n")
 for domain in set(windows_domains):
 	file.write(domain + "\n")
-
+file.write("Domain controllers :  \n")
+for domain in set(domain_ctl):
+	file.write(domain + "\n")
 #q4
 print(set(users))
 file.write("Users : \n")
@@ -168,12 +186,14 @@ for adresses in set(impacted_adresses):
 print("\n")
 #q3
 print(set(iocs))
-file.write("IOCS impacted (hostname,ip) : \n")
+file.write("IOCS concerned (hostname,ip) : \n")
 for ioc in set(iocs):
 	file.write(ioc[0] + " " + ioc[1] + "\n")
 
 #q4
-
+file.write("Hashes detected : \n")
+for hash in set(hashes):
+	file.write(hash + "\n")
 
 file.close()
 
