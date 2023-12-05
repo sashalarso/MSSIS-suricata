@@ -133,8 +133,20 @@ for p_ip in set(private_ips):
 
 #q2
 file.write("\n")
-ips=[]
 
+file.write("Networks : \n")
+networks=[]
+for ip in set(private_ips):
+	ipa=ip.split(".")
+	if ipa[0]=="10":
+		networks.append("10.0.0.0/8")
+	elif ipa[0]=="172" and ip[1]>=16 and ip[1]<=31:
+		networks.append("172.16.0.0/12")
+	elif ipa[0]=="192" and ipa[1]=="168":
+		networks.append("192.168.0.0/16")
+for ip in set(networks):
+	file.write(ip + "\n")
+file.write("\n")
 #q3
 print(set(windows_domains))
 
