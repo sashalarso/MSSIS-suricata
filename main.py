@@ -17,11 +17,29 @@ def format_date(date):
 def extract_timestamp_key(timestamp):
     return datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f%z")
 
-def is_private_ip(ip):
-    try:
-        ip_obj = ipaddress.ip_address(ip)
-        return ip_obj.is_private
-    except ValueError:
+def is_private_ip(ip_address):
+    """
+    Vérifie si l'adresse IP fournie est une adresse IP privée.
+
+    :param ip_address: Adresse IP à vérifier
+    :return: True si l'adresse IP est privée, False sinon
+    """
+    
+    ip_parts = ip_address.split('.')
+
+    
+    if len(ip_parts) != 4:
+        return False
+
+   
+    ip_parts = [int(part) for part in ip_parts]
+
+   
+    if (ip_parts[0] == 10) or \
+       (ip_parts[0] == 172 and 16 <= ip_parts[1] <= 31) or \
+       (ip_parts[0] == 192 and ip_parts[1] == 168):
+        return True
+    else:
         return False
 
 data=[]
@@ -85,15 +103,25 @@ for line in data:
 	except:
 		continue
 	try:
+		
 		if line["event_type"]=="alert":
 			signatures.append(line["alert"]["signature"])
-			malwares.append(line["alert"]["metadata"]["malware_family"][0])
+			if "malware_family" in line["alert"]["metadata"]:
+				malwares.append(line["alert"]["metadata"]["malware_family"][0])
 			if "tls" in line and line["dest_ip"] not in set(private_ips):
+				
 				iocs.append((line["dest_ip"],line["tls"]["sni"]))
-			if "dns" in line and line["dest_ip"] not in set(private_ips):
-				iocs.append((line["dest_ip"],line["dns"]["query"][0]["rrname"]))
+			if "tls" in line and line["src_ip"] not in set(private_ips):
+				iocs.append((line["src_ip"],line["tls"]["sni"]))
+			if "http" in line and line["dest_ip"] not in set(private_ips):
+				
+				iocs.append((line["dest_ip"],line["http"]["hostname"]))
+			if "http" in line and line["src_ip"] not in set(private_ips):
+				iocs.append((line["src_ip"],line["http"]["hostname"]))
 	except:
 		continue
+		
+	
 	try:
 		if line["event_type"]=="alert":
 			if line["src_ip"] in private_ips: 
@@ -138,11 +166,12 @@ file.write("Networks : \n")
 networks=[]
 for ip in set(private_ips):
 	ipa=ip.split(".")
+	print(int(ipa[1]))
 	if ipa[0]=="10":
 		networks.append("10.0.0.0/8")
-	elif ipa[0]=="172" and ip[1]>=16 and ip[1]<=31:
+	elif ipa[0]=="172" and (int(ip[1])>=16 or int(ip[1])<=31):
 		networks.append("172.16.0.0/12")
-	elif ipa[0]=="192" and ipa[1]=="168":
+	elif int(ipa[0])=="192" and int(ipa[1])=="168":
 		networks.append("192.168.0.0/16")
 for ip in set(networks):
 	file.write(ip + "\n")
