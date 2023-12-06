@@ -51,7 +51,6 @@ with open(sys.argv[1],"r") as f:
 timestamps=[]
 private_ips=[]
 windows_domains=[]
-
 malwares=[]
 signatures=[]
 iocs=[]
@@ -63,7 +62,9 @@ impacted_adresses=[]
 domain_ctl=[]
 hashes=[]
 for line in data:
+	#q0
 	timestamps.append(line["timestamp"])
+	#q1
 	try:
 		if is_private_ip(line["src_ip"]):
 			private_ips.append(line["src_ip"])
@@ -71,6 +72,7 @@ for line in data:
 			private_ips.append(line["dest_ip"])
 	except:
 		continue
+	#q2
 	try:
 		if line["event_type"]=="dns":
 			if "windows" in line["dns"]["rrname"] or "microsoft" in line["dns"]["rrname"]:
@@ -78,12 +80,14 @@ for line in data:
 			if "rrname" in line["dns"]:
 				if line["dns"]["rrtype"]=="SRV":
 					domain_ctl.append(line["dns"]["rrname"])
+		#q6
 		if line["event_type"]=="flow":
 			if is_private_ip(line["src_ip"]) and line["app_proto"]!="failed":
 
 				services.append((line["app_proto"],"port : " + str(line["dest_port"])))
 	except:
 		continue
+	#q4-5
 	try:
 		if line["event_type"]=="smb":
 			if "ntlmssp" in line["smb"]:
@@ -95,6 +99,7 @@ for line in data:
 						os.append(line["smb"]["response"]["native_os"])
 	except:
 		continue
+	#q4
 	try:
 		if line["event_type"]=="krb5":
 			if "cname" in line["krb5"] and line["krb5"]["cname"]!="<empty>":
@@ -102,12 +107,16 @@ for line in data:
 				
 	except:
 		continue
+	#threat detection
 	try:
 		
 		if line["event_type"]=="alert":
+			#q0
 			signatures.append(line["alert"]["signature"])
+			#q1
 			if "malware_family" in line["alert"]["metadata"]:
 				malwares.append(line["alert"]["metadata"]["malware_family"][0])
+			#q3
 			if "tls" in line and line["dest_ip"] not in set(private_ips):
 				
 				iocs.append((line["dest_ip"],line["tls"]["sni"]))
@@ -121,7 +130,7 @@ for line in data:
 	except:
 		continue
 		
-	
+	#q2
 	try:
 		if line["event_type"]=="alert":
 			if line["src_ip"] in private_ips: 
@@ -130,6 +139,7 @@ for line in data:
 				impacted_adresses.append(line["dest_ip"])
 	except:
 		continue
+	#q4
 	try:
 		if line["event_type"]=="alert":
 			flow_id=line["flow_id"]
