@@ -73,7 +73,7 @@ for line in data:
 				windows_domains.append(line["dns"]["rrname"])
 			if "rrname" in line["dns"]:
 				if line["dns"]["rrtype"]=="SRV":
-					domain_ctl.append(line["dns"]["rrname"])
+					domain_ctl.append(line["dns"]["answers"][0]["srv"]["name"])
 		#q6
 		if line["event_type"]=="flow":
 			if is_private_ip(line["src_ip"]) and line["app_proto"]!="failed":
