@@ -18,12 +18,6 @@ def extract_timestamp_key(timestamp):
     return datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f%z")
 
 def is_private_ip(ip_address):
-    """
-    Vérifie si l'adresse IP fournie est une adresse IP privée.
-
-    :param ip_address: Adresse IP à vérifier
-    :return: True si l'adresse IP est privée, False sinon
-    """
     
     ip_parts = ip_address.split('.')
 
@@ -83,8 +77,8 @@ for line in data:
 		#q6
 		if line["event_type"]=="flow":
 			if is_private_ip(line["src_ip"]) and line["app_proto"]!="failed":
-
-				services.append((line["app_proto"],"port : " + str(line["dest_port"])))
+				if line["proto"]=="TCP":
+					services.append((line["app_proto"],"port : " + str(line["dest_port"])))
 	except:
 		continue
 	#q4-5
@@ -155,6 +149,8 @@ for line in data:
 sorted_timestamps=sorted(timestamps, key=extract_timestamp_key)
 
 file=open("report.txt","w")
+file.write("For file " + sys.argv[1])
+file.write("\n")
 #q0
 print(format_date(sorted_timestamps[0]))
 print(format_date(sorted_timestamps[-1]))
@@ -192,11 +188,13 @@ print(set(windows_domains))
 file.write("Windows domains :  \n")
 for domain in set(windows_domains):
 	file.write(domain + "\n")
+file.write("\n")
 file.write("Domain controllers :  \n")
 for domain in set(domain_ctl):
 	file.write(domain + "\n")
 #q4
 print(set(users))
+file.write("\n")
 file.write("Users : \n")
 for user in set(users):
 	file.write(user + "\n")
@@ -209,7 +207,7 @@ for op in set(os):
 file.write("\n")
 #q6
 print(set(services))
-file.write("Services : \n")
+file.write("Services TCP/IP : \n")
 for service in set(services):
 	file.write(service[0] + " " + service[1] + "\n")
 
@@ -237,11 +235,13 @@ for adresses in set(impacted_adresses):
 print("\n")
 #q3
 print(set(iocs))
+file.write("\n")
 file.write("IOCS concerned (hostname,ip) : \n")
 for ioc in set(iocs):
 	file.write(ioc[0] + " " + ioc[1] + "\n")
 
 #q4
+file.write("\n")
 file.write("Hashes detected : \n")
 for hash in set(hashes):
 	file.write(hash + "\n")
