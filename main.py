@@ -267,3 +267,5 @@ for x in file:
     pdf.cell(200, 10, txt = x, ln = 1, align = 'C')
 pdf.output("report.pdf")  
 
+print("Report wrote in report.pdf/.txt")
+
